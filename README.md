@@ -1,6 +1,6 @@
 # 一、数据结构、算法
 ## 1、基础算法
-* 十大排序算法（冒泡、选择、插入、希尔、归并、快速、堆、计数、桶、基数）https://zhuanlan.zhihu.com/p/4192329
+* 十大排序算法（冒泡、选择、插入、希尔、归并、快速、堆、计数、桶、基数）[https://zhuanlan.zhihu.com/p/4192329](https://zhuanlan.zhihu.com/p/41923298)
 * TopK和堆排序 https://github.com/sisterAn/JavaScript-Algorithms/issues/73
 * 浅拷贝与深拷贝 
 * 
