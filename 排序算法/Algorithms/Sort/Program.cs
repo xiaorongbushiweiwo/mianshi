@@ -21,7 +21,27 @@ int[] a = { 5, 4, 3, 2, 1, 7, 9, 6, 1};
 #region InsertionSort
 
 //InsertionSort.MinToMax(a);
-InsertionSort.MaxToMin(a);
+//InsertionSort.MaxToMin(a);
+
+#endregion
+
+#region ShellSort
+
+//ShellSort.MinToMax(a);
+//ShellSort.MaxToMin(a);
+
+#endregion
+
+#region MergeSort
+
+//MergeSort.ByRecursion(a);
+//MergeSort.ByIteration(a);
+
+#endregion
+
+#region QuickSort
+
+QuickSort.ByRecursion(a);
 
 #endregion
 
