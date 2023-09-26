@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 
 namespace A_Star;
 
@@ -25,9 +26,9 @@ public class AStar
     };
 
     private readonly int[] costs = { 10, 14, 10, 14, 10, 14, 10, 14 };
-    
-    PriorityQueue<OpenPoint, int> openPointPool = new PriorityQueue<OpenPoint, int>();
 
+    private List<OpenPoint> openPointPool = new List<OpenPoint>();
+    private Dictionary<Point, int> openPointIndexInPool = new Dictionary<Point, int>();
     public AStar(Map map)
     {
         this.map = map;
@@ -38,14 +39,14 @@ public class AStar
     {
         this.startPos = startPos;
         this.endPos = endPos;
+        
         path = null;
-
+        
         if (CheckPointIsClose(startPos))
             return false;
         
-        path = Find(startPos);
+        return Find(out path);
         
-        return false;
     }
 
     /// <summary>
@@ -56,59 +57,155 @@ public class AStar
         if (point.X < 0 || point.Y < 0 || point.X >= map.MAP_WIDTH || point.Y >= map.MAP_HEIGHT)
             return true;
 
-        return map.ClosedPointPool[point.X, point.Y];
+        return map.ClosedPointPool[point.Y, point.X];
     }
 
-    public Queue<Point> Find(Point point)
+    public bool Find(out Queue<Point> path)
     {
-        if (CheckPointIsClose(point))
-            return null;
+        path = null;
+        OpenPoint curPoint;
+        openPointPool.Add(new OpenPoint(this.startPos, this.endPos, 0, null));
+        //List<OpenPoint> pointQueue = new List<OpenPoint>();
         
-        //起始点
-        OpenPoint openPoint = new OpenPoint(startPos, endPos, 0, null);
-        openPointPool.Enqueue(openPoint, 0);
-        bool isFind = false;
-        OpenPoint curPoint = null;
-        Point curPos = new Point();
         while (openPointPool.Count > 0)
         {
-            /*depth++;
-            if (depth > depthLimit)
-                return null;*/
+            curPoint = openPointPool[openPointPool.Count - 1];
+            openPointPool.RemoveAt(openPointPool.Count - 1);
+            map.ClosedPointPool[curPoint.Pos.Y, curPoint.Pos.X] = true;
+            openPointIndexInPool.Remove(curPoint.Pos);
             
-            curPoint = openPointPool.Dequeue();
-            curPos = curPoint.Pos;
-            map.ClosedPointPool[curPos.X, curPos.Y] = true;
             for (int i = 0; i < 8; i++)
             {
-                Point nextPoint = new Point(curPos.X + direction[i, 0], curPos.Y + direction[i, 1]);
-                if (CheckPointIsClose(nextPoint))
+                Point nextDir = new Point(curPoint.Pos.X + direction[i, 0], curPoint.Pos.Y + direction[i, 1]);
+
+                if (CheckPointIsClose(nextDir))
                     continue;
-                if (nextPoint.Equals(endPos))
+                
+                if (!CheckIsSatisfyRule(curPoint.Pos, i))
+                    continue;
+                
+                if (nextDir.Equals(endPos))
                 {
-                    isFind = true;
+                    path = GetPath(curPoint);
+                    return true;
                 }
-                int curCost = curPoint.Cost + costs[i];
-                openPointPool.Enqueue(new OpenPoint(nextPoint, endPos, curCost, curPoint), curCost);
+                
+                int index = -1;
+                int cost = curPoint.Cost + costs[i];
+                OpenPoint nextDirPoint = new OpenPoint(nextDir, endPos, cost, curPoint);
+                
+                if (openPointIndexInPool.TryGetValue(nextDir, out index))
+                {
+                    if (nextDirPoint.Prep <= openPointPool[index].Prep)
+                    {
+                        openPointPool.RemoveAt(index);
+                        openPointIndexInPool.Remove(nextDir);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (openPointPool.Count > 0)
+                {
+                    int j = 0;
+                    for (; j < openPointPool.Count; j++)
+                    {
+                        if (nextDirPoint.Prep > openPointPool[j].Prep)
+                        {
+                            break;
+                        }
+                    }
+                    openPointPool.Insert(j, nextDirPoint);
+
+                }
+                else
+                {
+                    openPointPool.Add(nextDirPoint);
+                }
+                
+                /*if (pointQueue.Count > 0)
+                {
+                    int j = 0;
+                    for (; j < pointQueue.Count; j++)
+                    {
+                        if (nextDirPoint.Prep > pointQueue[j].Prep)
+                        {
+                            break;
+                        }
+                    }
+                    pointQueue.Insert(j, nextDirPoint);
+                }
+                else
+                {
+                    pointQueue.Add(nextDirPoint);
+                }*/
+                
             }
+            
+            /*foreach (var p in pointQueue)
+            {   
+                openPointPool.Add(p); 
+                openPointIndexInPool.Add(p.Pos, openPointPool.Count - 1);
+            }
+            
+            pointQueue.Clear();*/
+
         }
         
-        Queue<Point> path = new Queue<Point>();
-
-        if (isFind)
-        {
-            while (curPoint.Equals(null) && !CheckPointIsClose(curPoint.Pos))
-            {
-                path.Enqueue(curPoint.Pos);
-                curPoint = curPoint.FatherPos;
-            }
-
-            return path;
-        }
-        else
-        {
-            return null;
-        }
-
+        return false;
     }
+
+    /// <summary>
+    /// 判断当前搜索方向是否满足搜索规则
+    /// </summary>
+    public bool CheckIsSatisfyRule(Point start, int dirIndex)
+    {
+        if (Math.Abs(direction[dirIndex, 0]) == 1 && Math.Abs(direction[dirIndex, 1]) == 1)
+        {
+            if (CheckPointIsClose(new Point(start.X + direction[dirIndex, 0], start.Y)))
+                return false;
+            if (CheckPointIsClose(new Point(start.X, start.Y + direction[dirIndex, 1])))
+                return false;
+        }
+        return true;
+    }
+
+    public Queue<Point> GetPath(OpenPoint point)
+    {
+        Queue<Point> path = new Queue<Point>();
+        while (point != null)
+        {
+            path.Enqueue(point.Pos);
+            point = point.FatherPos;
+        }
+
+        return path;
+    }
+
+    private bool EnqueueCamparer(OpenPoint a, OpenPoint b)
+    {
+        if (a == null || b == null)
+        {
+            return false;
+        }
+        if (a.Prep >= b.Prep)
+            return true;
+        else
+            return false;
+    }
+
+    private bool GetItemCamparer(OpenPoint a, OpenPoint b)
+    {
+        if (a == null || b == null)
+        {
+            return false;
+        }
+        if (a.Pos.Equals(b.Pos))
+            return true;
+        else
+            return false;
+    }
+
 }

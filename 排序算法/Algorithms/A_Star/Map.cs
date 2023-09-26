@@ -21,7 +21,7 @@ public struct Map
     {
         map_width = mapWidth;
         map_height = mapHeight;
-        MapData = new char[map_width, map_height];
-        ClosedPointPool = new bool[map_width, map_height];
+        MapData = new char[map_height, map_width];
+        ClosedPointPool = new bool[map_height, map_width];
     }
 }

@@ -4,29 +4,37 @@ using A_Star;
 
 public class Program
 {
-    static Map map;
+    static Map map = new Map(7, 7);
     static AStar aStar;
+    static Point startPos = new Point(1, 1);
+    static Point endPos = new Point(6, 6);
     static Queue<Point>? path;
     
     public static int Main()
     {
-        map = new Map(40, 70);
         aStar = new AStar(map);
+
         CreateMap();
         PrintMap();
-        int dulTime = 0;
-        while (dulTime < 2000)
+
+        bool isFinded = aStar.Start(startPos, endPos, out path);
+        if (isFinded)
+            Console.WriteLine("Find successed!");
+        else
+            Console.WriteLine("Find fail!");
+
+        if (path != null)
         {
-            dulTime++;
+            Point point = new Point();
+            while (path.Count > 1)
+            {
+                point = path.Dequeue();
+                map.MapData[point.Y, point.X] = 'O';
+            }
+            point = path.Dequeue();
+            map.MapData[point.Y, point.X] = 'S';
         }
 
-        aStar.Start(new Point(20, 30), new Point( 70, 50), out path);
-
-        while (path != null && path.Count > 0)
-        {
-            Point point = path.Dequeue();
-            map.MapData[point.X, point.Y] = 'O';
-        }
 
         PrintMap();
         return 1;
@@ -35,10 +43,22 @@ public class Program
     public static void CreateMap()
     {
         Random random = new Random();
-        for (int i = 0; i < map.MAP_WIDTH; ++i)
-        for (int j = 0; j < map.MAP_HEIGHT; ++j) {
+        for (int i = 0; i < map.MAP_HEIGHT; ++i)
+        for (int j = 0; j < map.MAP_WIDTH; ++j) {
+
+            /*if (j == 3 && (i == 2 || i == 3 || i == 4))
+            {
+                map.MapData[i,j] = '*';
+                map.ClosedPointPool[i,j] = true;
+            }
+            else
+            {
+                map.MapData[i,j] = ' ';
+                map.ClosedPointPool[i,j] = false;
+            }*/
+            
             // 五分之一概率生成障碍物，不可走
-            if (random.Next() % 5 == 0) {
+            if (random.Next() % 4 == 0 && (endPos.X != i && endPos.Y != j)) {
                 map.MapData[i,j] = '*';
                 map.ClosedPointPool[i,j] = true;
             }
@@ -47,14 +67,34 @@ public class Program
                 map.ClosedPointPool[i,j] = false;
             }
         }
+        PrintMap();
+        map.MapData[startPos.X, startPos.Y] = 'S';
+        map.MapData[endPos.X, endPos.Y] = 'E';
     }
     
     static void  PrintMap() {
         Console.WriteLine("---------------------------------------------------------------------------------");
 
-        for (int i = 0; i < map.MAP_WIDTH; ++i) {
-            for (int j = 0; j < map.MAP_HEIGHT; ++j)
-                Console.Write(map.MapData[i,j]);
+        for (int i = 0; i <= map.MAP_HEIGHT; ++i) {
+            for (int j = 0; j <= map.MAP_WIDTH; ++j)
+            {
+                if (i == 0)
+                {
+                    int lie = (j - 1) < 0 ? 0 : j - 1;
+                    Console.Write(lie + "  ");
+                    continue;
+                }
+                if (j == 0)
+                {
+                    int hang = (i - 1) < 0 ? 0 : i - 1;
+                    Console.Write(hang + "  ");
+                    continue;
+                }
+                
+                Console.Write(map.MapData[i - 1,j - 1] + "  ");
+
+            }
+
             Console.Write('\n');
         }
         Console.WriteLine("---------------------------------------------------------------------------------");
