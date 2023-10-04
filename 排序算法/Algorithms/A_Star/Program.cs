@@ -12,7 +12,8 @@ public class Program
     
     public static int Main()
     {
-        aStar = new AStar(map);
+        print(new []{100,4,200,1,3,2,4});
+        /*aStar = new AStar(map);
 
         CreateMap();
         PrintMap();
@@ -36,7 +37,7 @@ public class Program
         }
 
 
-        PrintMap();
+        PrintMap();*/
         return 1;
     }
 
@@ -98,6 +99,12 @@ public class Program
             Console.Write('\n');
         }
         Console.WriteLine("---------------------------------------------------------------------------------");
+    }
+
+    static void print(int[] nums)
+    {
+        
+        
     }
 
 }
