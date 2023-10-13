@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "E:\\面试\\排序算法\\Algorithms\\Sort\\Sort.csproj": {}
+    "E:\\mianshi\\排序算法\\Algorithms\\Sort\\Sort.csproj": {}
   },
   "projects": {
-    "E:\\面试\\排序算法\\Algorithms\\Sort\\Sort.csproj": {
+    "E:\\mianshi\\排序算法\\Algorithms\\Sort\\Sort.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\面试\\排序算法\\Algorithms\\Sort\\Sort.csproj",
+        "projectUniqueName": "E:\\mianshi\\排序算法\\Algorithms\\Sort\\Sort.csproj",
         "projectName": "Sort",
-        "projectPath": "E:\\面试\\排序算法\\Algorithms\\Sort\\Sort.csproj",
-        "packagesPath": "C:\\Users\\1220\\.nuget\\packages\\",
-        "outputPath": "E:\\面试\\排序算法\\Algorithms\\Sort\\obj\\",
+        "projectPath": "E:\\mianshi\\排序算法\\Algorithms\\Sort\\Sort.csproj",
+        "packagesPath": "C:\\Users\\tangguo\\.nuget\\packages\\",
+        "outputPath": "E:\\mianshi\\排序算法\\Algorithms\\Sort\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "F:\\VS2022\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\1220\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\tangguo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -53,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\1220\\.dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     }
