@@ -44,9 +44,11 @@ public class AStar
         
         if (CheckPointIsClose(startPos))
             return false;
-        
+        int[] a = new int[10];
         return Find(out path);
-        
+        System.Console.WriteLine("%d", 10);
+        string b = "aaaa";
+        char c = b[1];
     }
 
     /// <summary>
